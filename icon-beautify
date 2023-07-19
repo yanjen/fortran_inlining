@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if ! which fprettify > /dev/null; then
+  echo -e "fprettify not found!"
+  read -p "Install via pip? (Y/n) " response
+  if [[ "$response" == "y" || "Y" ]]
+  then
+    if which pip > /dev/null; then
+      pip install fprettify
+    else
+      echo "Please install pip!"
+      exit 0
+    fi
+  fi
+fi
+
+fprettify --case 2 2 2 1 -i 2 -w 2 --strip-comments -r .

@@ -4,10 +4,13 @@ project(FortranInlining VERSION 0.0.1 LANGUAGES Fortran)
 find_package(OpenACC REQUIRED)
 set(OpenACC_FLAGS "-Minfo=all -acc=gpu")
 set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${OpenACC_FLAGS}")
+include(${CMAKE_SOURCE_DIR}/cmake/openacc_helper.cmake)
 
 add_library(External_LIB functions.f90)
 target_compile_options(External_LIB PRIVATE ${OpenACC_Fortran_OPTIONS})
 target_link_libraries(External_LIB OpenACC::OpenACC_Fortran)
+
+add_OpenACC_inline_library(${CMAKE_SOURCE_DIR}/functions.f90)
 
 add_executable(init initialization.f90)
 target_compile_options(init PRIVATE ${OpenACC_Fortran_OPTIONS})
@@ -15,4 +18,4 @@ target_link_libraries(init OpenACC::OpenACC_Fortran External_LIB)
 
 add_executable(init_inline initialization.f90)
 target_compile_options(init_inline PRIVATE ${OpenACC_Fortran_OPTIONS} -Minline=lib:External_LIB.ext)
-target_link_libraries(init_inline OpenACC::OpenACC_Fortran)
+target_link_libraries(init_inline OpenACC::OpenACC_Fortran External_LIB)

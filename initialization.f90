@@ -1,5 +1,5 @@
 PROGRAM initialization
-  USE functions, ONLY: assign_value
+  USE functions, ONLY: assign_value, pred
 
   IMPLICIT NONE
   INTEGER :: i, n = 10000
@@ -27,6 +27,7 @@ PROGRAM initialization
   !$ACC LOOP
   DO i = 1, n
     CALL assign_value(a(i), b(i), c(i))
+    CALL func(i)
   END DO
   !$ACC END PARALLEL
   CALL CPU_TIME(t_end)
@@ -34,4 +35,11 @@ PROGRAM initialization
   PRINT *, "time[s] = ", t_end - t_start
 
   !$ACC END DATA
+
+  SUBROUTINE func(y) RESULT(tmp)
+    INTEGER, INTENT(in) :: y
+    INTEGER :: tmp
+    tmp = pred(y) + pred(0) + pred(y + 1)
+    RETURN
+  END SUBROUTINE
 END PROGRAM
